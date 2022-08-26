@@ -1,7 +1,7 @@
 const config_class = require('./config_class')
 const config_type = require('./enum_config_type');
 
-module.exports = { hasSyntaxErrorLine, hasSyntaxErrorBool }
+module.exports = { hasSyntaxErrorLine, hasSyntaxErrorBool, hasSyntaxErrorNumber }
 
 function hasSyntaxErrorLine(line) {
     // console.log('check for error')
@@ -52,4 +52,22 @@ function hasSyntaxErrorBool(input) {
     }
         
     return true
+}
+
+
+/*
+    Description: Check if the number input is valid
+    @param: the given input to check
+    @return: True if there is an error, False if no error
+*/
+function hasSyntaxErrorNumber(input) {
+    // console.log('@hasSyntaxErrorNumber')
+
+    if (isNaN(input)) {
+        // console.info('invalid number')
+        return true
+
+    } 
+        
+    return false
 }

@@ -1,4 +1,4 @@
-const myFunctions = require('./myFunctions')
+const myFunctions = require('./my_functions')
 
 var input = ""
 

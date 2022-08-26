@@ -10,9 +10,10 @@ module.exports = { parse }
 
 
 async function parse(input) {
-    var linesOfFile = {}
+    var lineWithError = ""
     var lineCount = 0
     var config = new config_class.Config()
+    var hasError = false
 
     try {
         // Read the file line by line
@@ -22,54 +23,61 @@ async function parse(input) {
         });
     
         rl.on('line', (line) => {
-            console.log(`Line ${lineCount}: "${line}"`);
-            linesOfFile[lineCount] = line
+            if (hasError) {
+                return
 
-            switch (determineWhatToParse(line)) {
-                case config_type.Config_Type.host:
-                    config.host = parseHost(line)
-                    break
-
-                case config_type.Config_Type.server_id:
-                    config.server_id = parseServerId(line)
-                    break
-
-                case config_type.Config_Type.server_load_alarm:
-                    config.server_load_alarm = parseServerLoad(line)
-                    break
-
-                case config_type.Config_Type.user:
-                    config.user = parseUser(line)
-                    break
-
-                case config_type.Config_Type.verbose:
-                    config.verbose = parseVerbose(line)
-                    break
-
-                case config_type.Config_Type.test_mode:
-                    config.test_mode = parseTestMode(line)
-                    break
-
-                case config_type.Config_Type.debug_mode:
-                    config.debug_mode = parseDebugMode(line)
-                    break
-
-                case config_type.Config_Type.log_file_path:
-                    config.log_file_path = parseLogFilePath(line)
-                    break
-
-                case config_type.Config_Type.send_notifications:
-                    config.send_notifications = parseSendNotification(line)
-                    break
-
-                case config_type.Config_Type.comment:
-                    parseComment(line)
-                    break
-
-                case config_type.Config_Type.error:
-                    console.error(`Line ${lineCount} has an error`)
-                    break                
+            } else {
+                console.log(`Line ${lineCount}: "${line}"`);
+                switch (determineWhatToParse(line)) {
+                    case config_type.Config_Type.host:
+                        config.host = parseHost(line)
+                        break
+    
+                    case config_type.Config_Type.server_id:
+                        config.server_id = parseServerId(line)
+                        break
+    
+                    case config_type.Config_Type.server_load_alarm:
+                        config.server_load_alarm = parseServerLoad(line)
+                        break
+    
+                    case config_type.Config_Type.user:
+                        config.user = parseUser(line)
+                        break
+    
+                    case config_type.Config_Type.verbose:
+                        config.verbose = parseVerbose(line)
+                        break
+    
+                    case config_type.Config_Type.test_mode:
+                        config.test_mode = parseTestMode(line)
+                        break
+    
+                    case config_type.Config_Type.debug_mode:
+                        config.debug_mode = parseDebugMode(line)
+                        break
+    
+                    case config_type.Config_Type.log_file_path:
+                        config.log_file_path = parseLogFilePath(line)
+                        break
+    
+                    case config_type.Config_Type.send_notifications:
+                        config.send_notifications = parseSendNotification(line)
+                        break
+    
+                    case config_type.Config_Type.comment:
+                        parseComment(line)
+                        break
+    
+                    case config_type.Config_Type.error:
+                        console.error(`Line ${lineCount} has an error`)
+                        hasError = true
+                        lineWithError = line
+                        break
+                }
             }
+
+            
 
             lineCount += 1
             console.log()
@@ -77,10 +85,15 @@ async function parse(input) {
     
         await events.once(rl, 'close');
     
-        console.log('Reading file line by line with readline done.');
-        console.log('These are the loaded config values:')
-        config.toString()
-        return linesOfFile
+        console.log('Reading file line by line with readline done.\n');
+
+        if (hasError) {
+            console.error(`Error in line ${lineCount} for value "${lineWithError}"`)
+        } else {
+            console.log('These are the loaded config values:')
+            config.toString()
+        }
+
     } catch (err) {
         console.error(err);
     }
@@ -127,9 +140,15 @@ function determineWhatToParse(line) {
         return config_type.Config_Type.host
 
     } else if (key == config_type.Config_Type.server_id.description) {
+        if (error_checking.hasSyntaxErrorNumber(value)) {
+            return config_type.Config_Type.error
+        }
         return config_type.Config_Type.server_id
 
     } else if (key == config_type.Config_Type.server_load_alarm.description) {
+        if (error_checking.hasSyntaxErrorNumber(value)) {
+            return config_type.Config_Type.error
+        }
         return config_type.Config_Type.server_load_alarm
 
     } else if (key == config_type.Config_Type.user.description) {
@@ -179,6 +198,15 @@ function parseString(line) {
 }
 
 
+function parseNumber(line) {
+    let split = line.split('=')
+    let lastIndex = split.length - 1
+    let value = Number(split[lastIndex].trim())
+    // console.log('value:', value)
+    return value
+}
+
+
 function parseBool(line) {
     let split = line.split('=')
     let lastIndex = split.length - 1
@@ -216,13 +244,13 @@ function parseHost(line) {
 
 function parseServerId(line) {
     console.log('@parseServerId')
-    return parseString(line)
+    return parseNumber(line)
 }
 
 
 function parseServerLoad(line) {
     console.log('@parseServerLoad')
-    return parseString(line)
+    return parseNumber(line)
 }
 
 
