@@ -32,7 +32,7 @@ send_notifications = yes
 
 
 ## How to Run
-1. Where the repo is saved, run "node main.js FILE_NAME" 
+1. Where the repo is saved, run "node main.js FILE_NAME". FILE_NAME is the name of the config file that will be loaded in
 2. The program will run and read in the argument for FILE_NAME.
 
 ## Additional information
