@@ -32,8 +32,10 @@ send_notifications = yes
 
 
 ## How to Run
-1. Where the repo is saved, run "node parse.js FILE_NAME" 
+1. Where the repo is saved, run "node main.js FILE_NAME". FILE_NAME is the name of the config file that will be loaded in
 2. The program will run and read in the argument for FILE_NAME.
+
+* Example: run "node main.js ./config.txt" assuming the config.txt file is in the same folder as the code
 
 ## Additional information
 * For number 3, when you say "we should be able to get the values of the config parameters in code," do you mean the program should allow the user to retrieve the config values after loading them in, or would simply displaying the config values after parsing be sufficient?

@@ -1,4 +1,4 @@
-const myFunctions = require('./my_functions')
+const parser = require('./parse_functions')
 
 var input = ""
 
@@ -19,5 +19,5 @@ if (input == "") {
     console.log("no file was provided")
 }
 
-myFunctions.parse(input)
+parser.parse(input)
 
