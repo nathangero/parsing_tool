@@ -32,7 +32,7 @@ send_notifications = yes
 
 
 ## How to Run
-1. Where the repo is saved, run "node parse.js FILE_NAME" 
+1. Where the repo is saved, run "node main.js FILE_NAME" 
 2. The program will run and read in the argument for FILE_NAME.
 
 ## Additional information
